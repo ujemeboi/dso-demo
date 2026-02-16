@@ -30,16 +30,32 @@ pipeline {
       }
     }
     stage('Package') {
-      parallel {
+    parallel {
         stage('Create Jarfile') {
-          steps {
-            container('maven') {
-              sh 'mvn package -DskipTests'
+            steps {
+                container('maven') {
+                    sh 'mvn package -DskipTests'
+                }
             }
-          }
         }
+        stage('OCI Image BnP') {
+            steps {
+                container('kaniko') {
+                    // Using triple single quotes for a cleaner multi-line command
+                    sh '''
+                        /kaniko/executor \
+                        -f `pwd`/Dockerfile \
+                        -c `pwd` \
+                        --insecure \
+                        --skip-tls-verify \
+                        --cache=true \
+                        --destination=docker.io/osasuyia/dso-demo:latest
+                    '''
+                    }
+                }
+             }
+          }
       }
-    }
 
     stage('Deploy to Dev') {
       steps {
