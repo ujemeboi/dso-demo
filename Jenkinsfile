@@ -1,4 +1,4 @@
-pipeline {
+ipeline {
   agent {
     kubernetes {
       yamlFile 'build-agent.yaml'
@@ -38,9 +38,16 @@ pipeline {
             }
           }
         }
-      }
+    stage('OCIImageBnP') { 
+         steps { 
+           container('kaniko') {
+             sh '/kaniko/executor -f `pwd` /Dockerfile -c `pwd` --insecure
+    --skip-tls-verify --cache=true --destination=docker.io/dckr_pat_hmEAqO7peL0eDVE5dP4wQSFzAOE/dso-demo'       
+                }
+            }
+        }
     }
-
+}
     stage('Deploy to Dev') {
       steps {
         // TODO
