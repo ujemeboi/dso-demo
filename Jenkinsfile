@@ -1,4 +1,4 @@
-ipeline {
+Pipeline {
   agent {
     kubernetes {
       yamlFile 'build-agent.yaml'
